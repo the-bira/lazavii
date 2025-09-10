@@ -205,14 +205,37 @@ export default function VendasPage() {
         atualizadoEm: new Date(),
       };
 
-      setVendas((prev) =>
-        prev.map((v) => (v.id === editingVenda.id ? vendaAtualizada : v))
-      );
-      toast({
-        title: "Venda atualizada",
-        description:
-          "A venda foi atualizada localmente. Sincronização com o banco não implementada.",
-      });
+      try {
+        console.log("✏️ [handleSubmit] Atualizando venda no Firestore...");
+        const sucesso = await updateVenda(editingVenda.id, vendaAtualizada);
+
+        if (sucesso) {
+          setVendas((prev) =>
+            prev.map((v) => (v.id === editingVenda.id ? vendaAtualizada : v))
+          );
+          toast({
+            title: "Venda atualizada",
+            description:
+              "A venda foi atualizada com sucesso no banco de dados.",
+          });
+          console.log("✅ [handleSubmit] Venda atualizada com sucesso!");
+        } else {
+          toast({
+            title: "Erro",
+            description: "Não foi possível atualizar a venda. Tente novamente.",
+            variant: "destructive",
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("❌ [handleSubmit] Erro ao atualizar venda:", error);
+        toast({
+          title: "Erro",
+          description: "Ocorreu um erro ao atualizar a venda.",
+          variant: "destructive",
+        });
+        return;
+      }
     } else {
       // Criar nova venda
       const novaVendaData = {
@@ -298,41 +321,89 @@ export default function VendasPage() {
     setIsDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
-    // Remover venda localmente (remoção no banco não implementada)
-    setVendas((prev) => prev.filter((v) => v.id !== id));
-    toast({
-      title: "Venda removida",
-      description:
-        "A venda foi removida localmente. Remoção permanente não implementada.",
-      variant: "destructive",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      console.log("🗑️ [handleDelete] Iniciando remoção da venda:", id);
+
+      // Chamar a função do Firebase para deletar a venda
+      const sucesso = await deleteVenda(id);
+
+      if (sucesso) {
+        // Remover venda da lista local
+        setVendas((prev) => prev.filter((v) => v.id !== id));
+        toast({
+          title: "Venda removida",
+          description:
+            "A venda foi removida permanentemente do banco de dados e o estoque foi restaurado.",
+        });
+        console.log("✅ [handleDelete] Venda removida com sucesso!");
+      } else {
+        toast({
+          title: "Erro",
+          description: "Não foi possível remover a venda. Tente novamente.",
+          variant: "destructive",
+        });
+        console.error("❌ [handleDelete] Falha ao remover venda");
+      }
+    } catch (error) {
+      console.error("❌ [handleDelete] Erro ao remover venda:", error);
+      toast({
+        title: "Erro",
+        description: "Ocorreu um erro ao remover a venda.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleConfirmPayment = async (id: string) => {
     try {
-      const venda = vendas.find((v) => v.id === id);
-      if (!venda) return;
+      console.log(
+        "💰 [handleConfirmPayment] Confirmando pagamento da venda:",
+        id
+      );
 
-      const vendaAtualizada: Venda = {
-        ...venda,
-        statusPagamento: "pago" as const,
-        dataPagamento: new Date(),
-        atualizadoEm: new Date(),
-      };
+      // Chamar a função do Firebase para confirmar pagamento
+      const sucesso = await confirmarPagamento(id);
 
-      // Atualizar localmente (atualização no banco não implementada)
-      setVendas((prev) => prev.map((v) => (v.id === id ? vendaAtualizada : v)));
+      if (sucesso) {
+        // Atualizar venda localmente
+        const venda = vendas.find((v) => v.id === id);
+        if (venda) {
+          const vendaAtualizada: Venda = {
+            ...venda,
+            statusPagamento: "pago" as const,
+            dataPagamento: new Date(),
+            atualizadoEm: new Date(),
+          };
+          setVendas((prev) =>
+            prev.map((v) => (v.id === id ? vendaAtualizada : v))
+          );
+        }
 
-      toast({
-        title: "Pagamento confirmado",
-        description: "O pagamento da venda foi confirmado com sucesso.",
-      });
+        toast({
+          title: "Pagamento confirmado",
+          description: "O pagamento da venda foi confirmado com sucesso.",
+        });
+        console.log(
+          "✅ [handleConfirmPayment] Pagamento confirmado com sucesso!"
+        );
+      } else {
+        toast({
+          title: "Erro",
+          description:
+            "Não foi possível confirmar o pagamento. Tente novamente.",
+          variant: "destructive",
+        });
+        console.error("❌ [handleConfirmPayment] Falha ao confirmar pagamento");
+      }
     } catch (error) {
-      console.error("Erro ao confirmar pagamento:", error);
+      console.error(
+        "❌ [handleConfirmPayment] Erro ao confirmar pagamento:",
+        error
+      );
       toast({
         title: "Erro",
-        description: "Não foi possível confirmar o pagamento.",
+        description: "Ocorreu um erro ao confirmar o pagamento.",
         variant: "destructive",
       });
     }

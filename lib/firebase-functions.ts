@@ -1282,10 +1282,10 @@ export const deleteVenda = async (vendaId: string): Promise<boolean> => {
 
           if (produtoDoc.exists()) {
             const produtoData = produtoDoc.data();
-            const novoEstoque = (produtoData.estoque || 0) + item.quantidade;
+            const novoEstoque = (produtoData.stock || 0) + item.quantidade;
 
             await updateDoc(produtoRef, {
-              estoque: novoEstoque,
+              stock: novoEstoque,
               atualizadoEm: serverTimestamp(),
             });
 
