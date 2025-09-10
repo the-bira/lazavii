@@ -16,7 +16,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: "10.12.2" # Versão exata do seu pnpm
+          version: 10.12.2
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env.production
       - name: Build
@@ -27,3 +27,5 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LAZAVII_FINANCIALS }}
           channelId: live
           projectId: lazavii-financials
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
