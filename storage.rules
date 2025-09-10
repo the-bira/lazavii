@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Regras para imagens de produtos
+    match /produtos/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para imagens de fornecedores
+    match /fornecedores/{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para outros arquivos
+    match /{allPaths=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
