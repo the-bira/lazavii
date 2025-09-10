@@ -1,49 +1,49 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Regras para fornecedores
-    match /fornecedores/{document} {
+    
+    // Coleção de usuários: cada usuário só pode acessar seu próprio doc
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Coleção de usuários (versão em português)
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Coleções abertas para usuários autenticados
+    match /products/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para produtos
-    match /produtos/{document} {
+
+    match /produtos/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para vendas
-    match /vendas/{document} {
+
+    match /sales/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para custos
-    match /custos/{document} {
+
+    match /vendas/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para metas
-    match /metas/{document} {
+
+    // Novas coleções necessárias para a aplicação
+    match /fornecedores/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para insights
-    match /insights/{document} {
+
+    match /custos/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para logs
-    match /logs/{document} {
+
+    match /metas/{document=**} {
       allow read, write: if request.auth != null;
     }
-    
-    // Regras para extornos
-    match /extornos/{document} {
+
+    match /logs/{document=**} {
       allow read, write: if request.auth != null;
-    }
-    
-    // Regra padrão - negar acesso a documentos não especificados
-    match /{document=**} {
-      allow read, write: if false;
     }
   }
 }
