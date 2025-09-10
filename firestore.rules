@@ -1,0 +1,39 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Regras para fornecedores
+    match /fornecedores/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para produtos
+    match /produtos/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para vendas
+    match /vendas/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para custos
+    match /custos/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para metas
+    match /metas/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para logs
+    match /logs/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // Regras para usuários
+    match /usuarios/{document} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

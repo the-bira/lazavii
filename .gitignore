@@ -1,0 +1,19 @@
+# Excluir dependências
+/node_modules
+/.pnp
+.pnp.js
+
+# Excluir Next.js build e cache
+.next/
+out/
+
+# Excluir variáveis de ambiente
+.env.local
+.env*.local
+
+# Excluir outros arquivos gerados
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.local
