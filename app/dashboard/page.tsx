@@ -538,26 +538,28 @@ export default function DashboardPage() {
                   ))}
                   <Button
                     onClick={handleGerarInsights}
-                    disabled={loadingInsights}
+                    disabled={true}
                     className="w-full bg-primary hover:bg-primary/90"
+                    title="Funcionalidade temporariamente desabilitada"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
-                    {loadingInsights ? "Gerando..." : "Atualizar Insights"}
+                    Atualizar Insights (Desabilitado)
                   </Button>
                 </div>
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-muted-foreground mb-4">
-                    Nenhum insight disponível. Clique no botão para gerar
-                    análises inteligentes.
+                    Análise com IA temporariamente desabilitada. Os insights
+                    serão restaurados em breve.
                   </p>
                   <Button
                     onClick={handleGerarInsights}
-                    disabled={loadingInsights}
+                    disabled={true}
                     className="w-full bg-primary hover:bg-primary/90"
+                    title="Funcionalidade temporariamente desabilitada"
                   >
                     <Sparkles className="h-4 w-4 mr-2" />
-                    {loadingInsights ? "Gerando..." : "Gerar Análise"}
+                    Gerar Análise (Desabilitado)
                   </Button>
                 </div>
               )}

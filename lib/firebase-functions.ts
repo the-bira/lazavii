@@ -1223,6 +1223,96 @@ export const createExtorno = async (
   }
 };
 
+export const updateVenda = async (
+  vendaId: string,
+  vendaData: Partial<Venda>
+): Promise<boolean> => {
+  console.log("✏️ [updateVenda] Atualizando venda:", vendaId);
+
+  try {
+    const vendaRef = doc(db, "vendas", vendaId);
+
+    // Preparar dados para atualização
+    const updateData: any = {
+      ...vendaData,
+      atualizadoEm: serverTimestamp(),
+    };
+
+    // Se a dataVenda foi alterada, converter para Date
+    if (vendaData.dataVenda) {
+      updateData.dataVenda =
+        vendaData.dataVenda instanceof Date
+          ? vendaData.dataVenda
+          : new Date(vendaData.dataVenda);
+    }
+
+    await updateDoc(vendaRef, updateData);
+
+    console.log("✅ [updateVenda] Venda atualizada com sucesso!");
+    return true;
+  } catch (error) {
+    console.error("❌ [updateVenda] Erro ao atualizar venda:", error);
+    return false;
+  }
+};
+
+export const deleteVenda = async (vendaId: string): Promise<boolean> => {
+  console.log("🗑️ [deleteVenda] Excluindo venda:", vendaId);
+
+  try {
+    // Primeiro, buscar a venda para restaurar o estoque
+    const vendaRef = doc(db, "vendas", vendaId);
+    const vendaDoc = await getDoc(vendaRef);
+
+    if (!vendaDoc.exists()) {
+      console.error("❌ [deleteVenda] Venda não encontrada");
+      return false;
+    }
+
+    const vendaData = vendaDoc.data() as Venda;
+
+    // Restaurar estoque dos produtos
+    if (vendaData.itens && vendaData.itens.length > 0) {
+      console.log("📦 [deleteVenda] Restaurando estoque dos produtos...");
+
+      for (const item of vendaData.itens) {
+        try {
+          const produtoRef = doc(db, "produtos", item.produtoId);
+          const produtoDoc = await getDoc(produtoRef);
+
+          if (produtoDoc.exists()) {
+            const produtoData = produtoDoc.data();
+            const novoEstoque = (produtoData.estoque || 0) + item.quantidade;
+
+            await updateDoc(produtoRef, {
+              estoque: novoEstoque,
+              atualizadoEm: serverTimestamp(),
+            });
+
+            console.log(
+              `📦 [deleteVenda] Estoque restaurado para produto ${item.produtoId}: +${item.quantidade}`
+            );
+          }
+        } catch (error) {
+          console.error(
+            `❌ [deleteVenda] Erro ao restaurar estoque do produto ${item.produtoId}:`,
+            error
+          );
+        }
+      }
+    }
+
+    // Excluir a venda
+    await deleteDoc(vendaRef);
+
+    console.log("✅ [deleteVenda] Venda excluída com sucesso!");
+    return true;
+  } catch (error) {
+    console.error("❌ [deleteVenda] Erro ao excluir venda:", error);
+    return false;
+  }
+};
+
 export const confirmarPagamento = async (vendaId: string): Promise<boolean> => {
   console.log(
     "💰 [confirmarPagamento] Confirmando pagamento da venda:",

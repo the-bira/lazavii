@@ -442,10 +442,11 @@ export default function MetasPage() {
           <Button
             variant="outline"
             onClick={gerarMetasIA}
-            disabled={isGeneratingIA}
+            disabled={true}
+            title="Funcionalidade temporariamente desabilitada"
           >
             <Sparkles className="h-4 w-4 mr-2" />
-            {isGeneratingIA ? "Gerando..." : "Gerar Metas com IA"}
+            Gerar Metas com IA (Desabilitado)
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -762,9 +763,14 @@ export default function MetasPage() {
                       <Plus className="h-4 w-4 mr-2" />
                       Criar Meta
                     </Button>
-                    <Button variant="outline" onClick={gerarMetasIA}>
+                    <Button
+                      variant="outline"
+                      onClick={gerarMetasIA}
+                      disabled={true}
+                      title="Funcionalidade temporariamente desabilitada"
+                    >
                       <Sparkles className="h-4 w-4 mr-2" />
-                      Gerar com IA
+                      Gerar com IA (Desabilitado)
                     </Button>
                   </div>
                 </CardContent>

@@ -56,6 +56,8 @@ import {
   getVendas as fetchVendas,
   createVenda as createVendaInDb,
   createVendaMultiProduto,
+  updateVenda,
+  deleteVenda,
   confirmarPagamento,
   createExtorno,
 } from "@/lib/firebase-functions";
