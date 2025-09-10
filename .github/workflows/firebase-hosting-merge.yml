@@ -1,3 +1,4 @@
+---
 name: Deploy to Firebase Hosting on merge
 on:
   push:
@@ -8,14 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22.x" # Agora está configurado para a sua versão
+          node-version: "22.x"
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8.x
+          version: "10.12.2" # Versão exata do seu pnpm
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env.production
       - name: Build
