@@ -96,8 +96,8 @@ export function AppHeader() {
             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
               <Avatar className="h-10 w-10">
                 <AvatarImage
-                  src={user?.photoURL || ""}
-                  alt={user?.displayName || ""}
+                  src={(user as any)?.photoURL ?? ""}
+                  alt={user?.name ?? ""}
                 />
                 <AvatarFallback>
                   <User className="h-4 w-4" />
@@ -109,7 +109,7 @@ export function AppHeader() {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none">
-                  {user?.displayName || "Usuário"}
+                  {user?.name || "Usuário"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
                   {user?.email}
