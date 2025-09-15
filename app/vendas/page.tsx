@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/main-layout";
@@ -79,6 +79,11 @@ export default function VendasPage() {
   const [loadingData, setLoadingData] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Debug: Log do estado do dialog
+  React.useEffect(() => {
+    console.log("🔘 [Dialog] Estado do dialog mudou:", isDialogOpen);
+  }, [isDialogOpen]);
   const [editingVenda, setEditingVenda] = useState<Venda | null>(null);
   const { toast } = useToast();
 
@@ -309,6 +314,9 @@ export default function VendasPage() {
   };
 
   const handleEdit = (venda: Venda) => {
+    console.log("✏️ [handleEdit] Editando venda:", venda);
+    console.log("✏️ [handleEdit] Itens da venda:", venda.itens);
+
     setEditingVenda(venda);
     setFormData({
       itens: venda.itens || [],
@@ -319,6 +327,7 @@ export default function VendasPage() {
       desconto: venda.desconto || 0,
     });
     setIsDialogOpen(true);
+    console.log("✏️ [handleEdit] Dialog aberto, editingVenda:", venda.id);
   };
 
   const handleDelete = async (id: string) => {
@@ -417,7 +426,13 @@ export default function VendasPage() {
         title="Registrar Venda"
         subtitle="Registre novas vendas e atualize o estoque"
       >
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            console.log("🔘 [Dialog] Dialog state changed:", open);
+            setIsDialogOpen(open);
+          }}
+        >
           <DialogTrigger asChild>
             <Button
               onClick={() => {
@@ -454,6 +469,10 @@ export default function VendasPage() {
                   products={produtos}
                   selectedItems={formData.itens}
                   onItemsChange={(items) => {
+                    console.log(
+                      "🛒 [MultiProductSelect] Itens alterados:",
+                      items
+                    );
                     setFormData((prev) => ({
                       ...prev,
                       itens: items,
@@ -724,7 +743,13 @@ export default function VendasPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => handleEdit(venda)}
+                      onClick={() => {
+                        console.log(
+                          "🔘 [Button] Botão de editar clicado para venda:",
+                          venda.id
+                        );
+                        handleEdit(venda);
+                      }}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>

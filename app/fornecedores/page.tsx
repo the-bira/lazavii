@@ -1,6 +1,6 @@
 "use client";
 
-import type React from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { MainLayout } from "@/components/main-layout";
 import { PageHeader } from "@/components/page-header";
@@ -100,6 +100,15 @@ export default function FornecedoresPage() {
     null
   );
   const [editingProduct, setEditingProduct] = useState<Produto | null>(null);
+
+  // Debug: Log do estado do dialog de produto
+  React.useEffect(() => {
+    console.log(
+      "🔘 [ProductDialog] Estado do dialog mudou:",
+      isProductDialogOpen
+    );
+    console.log("🔘 [ProductDialog] editingProduct:", editingProduct);
+  }, [isProductDialogOpen, editingProduct]);
   const [selectedSupplierId, setSelectedSupplierId] = useState<string>("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{
@@ -460,7 +469,17 @@ export default function FornecedoresPage() {
   };
 
   const handleProductEdit = (product: Produto) => {
-    console.log("✏️ [handleProductEdit] Editando produto:", product.name);
+    console.log("✏️ [handleProductEdit] Editando produto:", product);
+    console.log("✏️ [handleProductEdit] Dados do produto:", {
+      name: product.name,
+      purchasePrice: product.purchasePrice,
+      salePrice: product.salePrice,
+      color: product.color,
+      sizing: product.sizing,
+      stock: product.stock,
+      photoUrl: product.photoUrl,
+    });
+
     setEditingProduct(product);
     setSelectedSupplierId(product.supplierId);
     setProductForm({
@@ -478,9 +497,22 @@ export default function FornecedoresPage() {
     setExpandedSuppliers((prev) => new Set([...prev, product.supplierId]));
 
     console.log(
-      "📂 [handleProductEdit] Acordeão expandido para fornecedor:",
+      "✏️ [handleProductEdit] Dialog aberto, editingProduct:",
+      product.id
+    );
+    console.log(
+      "✏️ [handleProductEdit] selectedSupplierId:",
       product.supplierId
     );
+    console.log("✏️ [handleProductEdit] productForm:", {
+      name: product.name,
+      purchasePrice: product.purchasePrice.toString(),
+      salePrice: product.salePrice.toString(),
+      color: product.color,
+      sizing: product.sizing,
+      stock: product.stock.toString(),
+      photoUrl: product.photoUrl || "",
+    });
   };
 
   const handleProductDelete = (product: Produto) => {
@@ -847,32 +879,34 @@ export default function FornecedoresPage() {
                                       product={product}
                                       onStockUpdate={handleStockUpdate}
                                     />
-                                    <DropdownMenu>
-                                      <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon">
-                                          <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                      </DropdownMenuTrigger>
-                                      <DropdownMenuContent>
-                                        <DropdownMenuItem
-                                          onClick={() =>
-                                            handleProductEdit(product)
-                                          }
-                                        >
-                                          <Edit className="h-4 w-4 mr-2" />
-                                          Editar
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                          onClick={() =>
-                                            handleProductDelete(product)
-                                          }
-                                          className="text-destructive"
-                                        >
-                                          <Trash2 className="h-4 w-4 mr-2" />
-                                          Excluir
-                                        </DropdownMenuItem>
-                                      </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        console.log(
+                                          "🔘 [DirectButton] Botão de editar produto clicado:",
+                                          product.name
+                                        );
+                                        handleProductEdit(product);
+                                      }}
+                                    >
+                                      <Edit className="h-4 w-4 mr-2" />
+                                      Editar
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        console.log(
+                                          "🔘 [DirectButton] Botão de deletar produto clicado:",
+                                          product.name
+                                        );
+                                        handleProductDelete(product);
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      Excluir
+                                    </Button>
                                   </div>
                                 </TableCell>
                               </TableRow>
@@ -905,7 +939,10 @@ export default function FornecedoresPage() {
         {/* Dialog de produto */}
         <Dialog
           open={isProductDialogOpen}
-          onOpenChange={setIsProductDialogOpen}
+          onOpenChange={(open) => {
+            console.log("🔘 [ProductDialog] Dialog state changed:", open);
+            setIsProductDialogOpen(open);
+          }}
         >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
