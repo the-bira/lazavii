@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Package, Plus, Search } from "lucide-react";
+import { ImageIcon, Package, Plus, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,14 +51,18 @@ export function StockPurchase({
 
     const term = searchTerm.toLowerCase();
     return products.filter((product) => {
+      const pictureUrl = product.photoUrl?.toLowerCase() || "";
       const supplierName = product.supplierName?.toLowerCase() || "";
       const productName = product.name?.toLowerCase() || "";
       const color = product.color?.toLowerCase() || "";
+      const sizing = product.sizing?.toLowerCase() || "";
 
       return (
+        pictureUrl.includes(term) ||
         supplierName.includes(term) ||
         productName.includes(term) ||
-        color.includes(term)
+        color.includes(term) ||
+        sizing.includes(term)
       );
     });
   }, [products, searchTerm]);
@@ -201,10 +205,22 @@ export function StockPurchase({
                       }`}
                       onClick={() => handleProductSelect(product)}
                     >
+                      {product.photoUrl ? (
+                        <img
+                          src={product.photoUrl}
+                          alt={product.name}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+                          <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="font-medium">
-                            {product.supplierName} - {product.name}
+                            {product.supplierName} - {product.name} -{" "}
+                            {product.sizing}
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Badge variant="outline" className="text-xs">

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, Search, Plus, X } from "lucide-react";
+import { Check, Search, Plus, X, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -37,15 +37,19 @@ export function MultiProductSelect({
         const supplierName = (
           product.supplierName ||
           product.fornecedorNome ||
+          product.sizing ||
           ""
         ).toLowerCase();
         const productName = (product.name || product.nome || "").toLowerCase();
         const color = (product.color || product.cor || "").toLowerCase();
 
+        const sizing = (product.sizing || "").toLowerCase();
+
         return (
           supplierName.includes(term) ||
           productName.includes(term) ||
-          color.includes(term)
+          color.includes(term) ||
+          sizing.includes(term)
         );
       })
       .slice(0, 10);
@@ -172,9 +176,20 @@ export function MultiProductSelect({
                   >
                     <Plus className="h-4 w-4 text-green-600" />
                     <div className="flex-1 min-w-0">
+                      {product.photoUrl ? (
+                        <img
+                          src={product.photoUrl}
+                          alt={product.name}
+                          className="w-12 h-12 object-cover rounded"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+                          <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                      )}
                       <div className="font-medium truncate">
-                        {product.supplierName || product.fornecedorNome} -{" "}
-                        {product.name || product.nome}
+                        {product.supplierName || product.fornecedorNome} -
+                        {product.sizing} - {product.name || product.nome}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Badge variant="outline" className="text-xs">
